@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "./components/Footer";
-import Header from "./components/header";
 import { MouseFollower } from "./components/MouseFlowers";
-import Script from "next/script";
 import LoaderAnimate from "./components/loaderAnimate";
+import Header from "./components/header";
 
 
 export const metadata: Metadata = {
