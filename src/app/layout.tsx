@@ -7,8 +7,12 @@ import Header from "./components/header";
 
 
 export const metadata: Metadata = {
-  title: "Negofit | Négoce Technique & Fourniture Industrielle",
+  title: "Negofit SARL | Import-Export & Fournitures Industrielles",
   description: "Negofit SARL, leader en Côte d'Ivoire dans le négoce technique et la fourniture industrielle.",
+  keywords: ["Negofit", "fournitures industrielles", "import-export", "Côte d'Ivoire", "matériel industriel"],
+  alternates: {
+    canonical: "https://www.negofit.org",
+  },
 };
 
 export default function RootLayout({
@@ -20,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <LoaderAnimate/>
-        <Header />
+       <Header/>
         <main> 
            <div className="bg-white relative overflow-x-hidden">
             <MouseFollower />

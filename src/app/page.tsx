@@ -3,11 +3,12 @@ import ServiceCaroussel from "./components/sections/serviceCaroussel";
 import PartnerCarousel from "./components/sections/partnersCarousel";
 import { getPartners } from "@/lib/partners";
 import { getProducts } from "@/lib/products";
-import Products from './components/sections/products';
 import FournisseursCarousel from "./components/sections/fournisseursCarousel";
 import { getFournisseurs } from "@/lib/fournisseurs";
 import About from "./components/sections/about";
 import Link from "next/link";
+import ProductsCarousel from "./components/sections/productsCarousel";
+
 
 export default async function Home() {
   const partners = await getPartners();
@@ -28,7 +29,7 @@ export default async function Home() {
      
 <ServiceCaroussel />
       {/* Produits Section */}
-         <Products
+         <ProductsCarousel
     products={Product} />
           <div className="text-center text-slate-100 mx-auto mt-10 w-32 bg-amber-500 rounded-full hover:bg-indigo-950">
             <button className=" h-12">
