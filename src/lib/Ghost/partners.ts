@@ -1,4 +1,6 @@
-import { ghost } from "./ghost"; // ✅ import nommé
+//import { ghost } from './ghost'; // ✅ import nommé
+
+import { ghost } from "./ghost";
 
 export async function getPartners(): Promise<string[]> {
   const posts = await ghost.posts.browse({
