@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { CirclePlus, ShoppingCart } from "lucide-react";
+import { CirclePlus, MinusCircle } from "lucide-react";
 
 type ProductItems = {
   id: string;
@@ -21,16 +23,22 @@ export default function ProduitsPb({
   title = "Les différents produits",
   products,
 }: ProduitsPbProps) {
+  const [visibleDescription, setVisibleDescription] = useState<string | null>(null);
+
+  const toggleDescription = (id: string) => {
+    setVisibleDescription((prev) => (prev === id ? null : id));
+  };
+
   return (
-    <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center text-indigo-950 mb-14 tracking-tight">
+        <h2 className="text-2xl md:text-3xl font-bold text-center text-indigo-950 mb-10 tracking-tight">
           {title}
         </h2>
 
         <Swiper
           modules={[Autoplay]}
-          spaceBetween={28}
+          spaceBetween={24}
           slidesPerView={1}
           autoplay={{ delay: 3000, disableOnInteraction: false }}
           loop
@@ -43,33 +51,72 @@ export default function ProduitsPb({
         >
           {products.map((product) => (
             <SwiperSlide key={product.id}>
-              <Card className="group relative flex flex-col rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-md overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
-                {/* Image */}
-                <div className="relative w-full h-52 overflow-hidden">
+              <Card className="group relative flex flex-col rounded-xl border border-gray-100 bg-white/90 backdrop-blur-sm shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                {/* Image plus compacte */}
+                <div className="relative w-full h-40 overflow-hidden">
                   <img
                     src={product.imageUrl}
                     alt={product.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
-                  {/* Gradient overlay subtil */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                 </div>
 
-                {/* Content */}
-                <CardContent className="p-5 text-center flex flex-col items-center">
-                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
+                {/* Contenu plus compact */}
+                <CardContent className="p-4 text-center flex flex-col items-center justify-between min-h-[60px]">
+                  {/* Titre */}
+                  <h3 className="text-base font-semibold text-indigo-950 group-hover:text-orange-600 transition-colors">
                     {product.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                    {product.description}
-                  </p>
 
-                  {/* CTA */}
-                  <button className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 text-white text-sm font-medium shadow-md hover:bg-orange-600 transition-all cursor-pointer">
-                    <CirclePlus size={16} />
-                    {product.title}
-                  </button>
+                  {/* Zone de description compacte */}
+                  <div className="relative w-full h-16 mt-2">
+                    <AnimatePresence mode="wait">
+                      {visibleDescription === product.id ? (
+                        <motion.div
+                          key="desc-visible"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="absolute inset-0 text-xs text-gray-600 overflow-hidden text-ellipsis line-clamp-3"
+                        >
+                          {product.description}
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="desc-hidden"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="absolute inset-0 flex items-center justify-center text-gray-400 text-xs italic"
+                        >
+                          ...
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Bouton toggle */}
+                  <motion.button
+                    onClick={() => toggleDescription(product.id)}
+                    whileTap={{ scale: 0.95 }}
+                    className="mt-3 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-orange-500 text-white text-xs font-medium shadow-sm hover:bg-orange-600 transition-all cursor-pointer"
+                  >
+                    {visibleDescription === product.id ? (
+                      <>
+                        <MinusCircle size={14} />
+                        Masquer
+                      </>
+                    ) : (
+                      <>
+                        <CirclePlus size={14} />
+                        Voir plus
+                      </>
+                    )}
+                  </motion.button>
                 </CardContent>
               </Card>
             </SwiperSlide>
