@@ -58,14 +58,14 @@ export default function HeroSlider() {
         loop
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         pagination={{ clickable: true }}
-        className="h-full"
+        className="h-full overlay"
       >
         {/* Slide 1 */}
         <SwiperSlide>
           <div className="relative h-[80vh] w-full flex items-center justify-center">
             {/* Background image + overlay */}
             <div
-              className="absolute inset-0 bg-cover bg-center"
+              className="absolute inset-0 bg-cover bg-center brightness-50"
               style={{ backgroundImage: "url(/assets/img/slider/slide_1.jpg)" }}
             >
               
@@ -90,7 +90,7 @@ export default function HeroSlider() {
           <div className="relative h-[80vh] w-full flex items-center justify-center">
             {/* Background image + overlay */}
             <div
-              className="absolute inset-0 bg-cover bg-center"
+              className="absolute inset-0 bg-cover bg-center brightness-50"
               style={{ backgroundImage: "url(/assets/img/slider/slide_2.jpg)" }}
             >
               

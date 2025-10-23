@@ -1,5 +1,5 @@
 //import ProductsCarousel from "@/app/components/sections/productsCarousel";
-import ProduitsPb from "@/app/components/sections/produitsPb";
+import PageProduits from "@/app/components/pageProduits";
 //import Products from "@/app/components/sections/productsCarousel";
 import getProducts from '@/lib/pocketBase/pb_getproducts';
 
@@ -10,7 +10,7 @@ export default async function PageProducts() {
         <>
         <div className="mt-28">
           
-          <ProduitsPb products={Product}/>
+          <PageProduits products={Product}/>
         </div>
         </>
     )

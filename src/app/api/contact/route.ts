@@ -2,13 +2,15 @@ import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 
+export const runtime = "nodejs";
+
 // Schéma Zod pour valider les données
 const contactSchema = z.object({
-  full_name: z.string().min(2),
-  email: z.string().email(),
-  subject: z.string().min(2),
-  phone: z.string().optional(),
-  message: z.string().min(10),
+  full_name: z.string().min(4, "Nom requis (4 caractères min)"),
+  email: z.email("Email invalide"),
+  subject: z.string().min(2, "Objet requis"),
+  phone: z.string().max(30, "Votre numéro de portable est requis"),
+  message: z.string().min(10, "Message trop court (10 caractères min)"),
 });
 
 export async function POST(req: Request) {
@@ -20,7 +22,7 @@ export async function POST(req: Request) {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
-      secure: true, // true pour 465, false pour 587
+      secure: Number(process.env.SMTP_PORT) === 465, // true pour 465, false pour 587
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -53,11 +55,11 @@ export async function POST(req: Request) {
     await transporter.sendMail(mailOptions);
 
     return NextResponse.json({ ok: true, message: "Email envoyé avec succès" }, { status: 200 });
-  } catch (err) {
+  } catch (err:any) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ ok: false, errors: err.flatten() }, { status: 422 });
     }
-    console.error("Erreur API contact:", err);
+    console.error("Erreur API contact:", err.message, err);
     return NextResponse.json({ ok: false, message: "Erreur serveur" }, { status: 500 });
   }
 }

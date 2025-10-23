@@ -45,7 +45,7 @@ export default function FournisseursPb({
           <SwiperSlide key={fournisseur.id}>
             <div className="flex justify-center">
                {/* Conteneur fixe */}
-              <div className="w-32 h-20 flex items-center justify-center bg-white rounded-md shadow-sm">
+              <div className="w-32 h-20 flex items-center justify-center bg-white  shadow-indigo-950 shadow-sm">
                    <img
                 src={fournisseur.imageUrl}
                 alt={fournisseur.title}
