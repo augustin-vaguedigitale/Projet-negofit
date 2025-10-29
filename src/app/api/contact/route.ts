@@ -1,15 +1,16 @@
+// app/api/contact/route.ts
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { z } from "zod";
 
-export const runtime = "nodejs";
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Schéma Zod pour valider les données
+// ✅ Schéma Zod pour validation
 const contactSchema = z.object({
   full_name: z.string().min(4, "Nom requis (4 caractères min)"),
-  email: z.email("Email invalide"),
+  email: z.string().email("Email invalide"),
   subject: z.string().min(2, "Objet requis"),
-  phone: z.string().max(30, "Votre numéro de portable est requis"),
+  phone: z.string().max(30, "Numéro invalide"),
   message: z.string().min(10, "Message trop court (10 caractères min)"),
 });
 
@@ -17,49 +18,28 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const validated = contactSchema.parse(body);
+   
 
-    // Créer le transporteur SMTP
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      secure: Number(process.env.SMTP_PORT) === 465, // true pour 465, false pour 587
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
-    // Contenu du mail
-    const mailOptions = {
-      from: `"Site Web Negofit" <${process.env.SMTP_USER}>`,
-      to: process.env.TO_EMAIL, // adresse de réception
-      subject: `Nouveau message : ${validated.subject}`,
-      text: `
-        Nom : ${validated.full_name}
-        Email : ${validated.email}
-        Téléphone : ${validated.phone || "non fourni"}
-        Message :
-        ${validated.message}
-      `,
+    const data = await resend.emails.send({
+      from: `Negofit <${process.env.FROM_EMAIL}>`,
+      to: [process.env.TO_EMAIL!],
+      subject: `📩 Nouveau message : ${validated.subject}`,
       html: `
         <h2>Nouveau message de contact</h2>
-        <p><b>Nom :</b> ${validated.full_name}</p>
-        <p><b>Email :</b> ${validated.email}</p>
-        <p><b>Téléphone :</b> ${validated.phone || "non fourni"}</p>
-        <p><b>Objet :</b> ${validated.subject}</p>
-        <p><b>Message :</b><br/>${validated.message}</p>
+        <p><strong>Nom :</strong> ${validated.full_name}</p>
+        <p><strong>Email :</strong> ${validated.email}</p>
+        <p><strong>Téléphone :</strong> ${validated.phone}</p>
+        <p><strong>Message :</strong></p>
+        <p>${validated.message}</p>
       `,
-    };
+    });
 
-    // Envoi
-    await transporter.sendMail(mailOptions);
-
-    return NextResponse.json({ ok: true, message: "Email envoyé avec succès" }, { status: 200 });
-  } catch (err:any) {
+    return NextResponse.json({ ok: true, data }, { status: 200 });
+  } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ ok: false, errors: err.flatten() }, { status: 422 });
     }
-    console.error("Erreur API contact:", err.message, err);
+    console.error("Erreur API contact :", err);
     return NextResponse.json({ ok: false, message: "Erreur serveur" }, { status: 500 });
   }
 }
